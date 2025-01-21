@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    container_name: sigmatech-test
+    image: golang:1.21
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=${TZ}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_DB_NAME=${MYSQL_DB_NAME}
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PASS=${REDIS_PASS}
+      - REDIS_PORT=${REDIS_PORT}
+    network_mode: "host"
