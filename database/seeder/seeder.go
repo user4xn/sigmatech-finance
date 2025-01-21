@@ -38,6 +38,7 @@ func UserSeed(db *gorm.DB) error {
 
 	InsertModel = []model.User{
 		{
+			UserType: "admin",
 			Email:    "demouser@gmail.com",
 			Password: string(hashedPasswordAdmin),
 		},
