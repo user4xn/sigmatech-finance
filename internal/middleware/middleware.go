@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Can be used in Http package or in every router.go inside each service
 func ApiKeyAuth() gin.HandlerFunc {
 	apiKey := config.AppApiKey()
 	return func(c *gin.Context) {

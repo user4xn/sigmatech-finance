@@ -19,7 +19,6 @@ import (
 type service struct {
 	UserRepository  repository.User
 	RedisRepository repository.Redis
-	TwoFactor       bool
 }
 
 type Service interface {
@@ -29,7 +28,6 @@ type Service interface {
 
 func NewService(f *factory.Factory) Service {
 	return &service{
-		TwoFactor:       true,
 		UserRepository:  f.UserRepository,
 		RedisRepository: f.RedisRepository,
 	}

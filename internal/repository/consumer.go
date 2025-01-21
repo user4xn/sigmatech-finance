@@ -75,7 +75,7 @@ func (r *consumer) FindOne(ctx context.Context, selectedFields string, query str
 }
 
 func (r *consumer) UpdateOne(db *gorm.DB, id int, data model.Consumer) error {
-	if err := db.Model(&model.Consumer{}).Where("id = ?", id).Updates(data).Error; err != nil {
+	if err := db.Model(&model.Consumer{}).Where("id = ?", id).Updates(&data).Error; err != nil {
 		return err
 	}
 	return nil

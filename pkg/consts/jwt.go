@@ -4,6 +4,7 @@ import "time"
 
 type (
 	SessionStatus int
+	UserType      string
 )
 
 const (
@@ -12,4 +13,7 @@ const (
 
 	TokenDurationRelease = time.Hour * 24 * 7
 	TokenDurationDev     = time.Hour * 24 * 30
+
+	UserTypeAdmin    UserType = "admin"
+	UserTypeConsumer UserType = "consumer"
 )

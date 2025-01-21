@@ -27,7 +27,7 @@ func AuthorizeSignature() gin.HandlerFunc {
 			authToken = c.GetHeader("Authorization")
 			dateTime  = c.GetHeader("Date-Time")
 			signature = c.GetHeader("Signature")
-			tNow      = time.Now().AddDate(0, 0, -2) // time for 2 days ago
+			tNow      = time.Now().AddDate(0, 0, -2)
 		)
 
 		err := func() error {
@@ -36,7 +36,6 @@ func AuthorizeSignature() gin.HandlerFunc {
 				return errors.New("failed to parse date-time, please use format yyyy-mm-dd hh:mm:ss")
 			}
 
-			// check if signature was expired (2 days ago)
 			if dateTimeTime.Before(tNow) {
 				return errors.New("signature was expired")
 			}

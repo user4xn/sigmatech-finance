@@ -2,6 +2,7 @@ package http
 
 import (
 	"clean-arch/internal/app/auth"
+	"clean-arch/internal/app/consumer"
 	"clean-arch/internal/app/user"
 	"clean-arch/internal/factory"
 	"clean-arch/internal/middleware"
@@ -45,4 +46,5 @@ func NewHttp(g *gin.Engine, f *factory.Factory) {
 	// Here we register the route from user handler
 	auth.NewHandler(f).Router(v1.Group("/auth"))
 	user.NewHandler(f).Router(v1.Group("/user"))
+	consumer.NewHandler(f).Router(v1.Group("/consumer"))
 }

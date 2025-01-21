@@ -16,7 +16,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func Authenticate() gin.HandlerFunc {
+func Authenticate(userType string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.Request.Header["Authorization"]
 
@@ -56,18 +56,35 @@ func Authenticate() gin.HandlerFunc {
 		if err == nil {
 			var cachedInfo dto.JwtSession
 			if err := json.Unmarshal([]byte(cachedData), &cachedInfo); err == nil {
+				if userType != "" && (userType != cachedInfo.UserType) {
+					response := util.APIResponse("Forbidden access: User not authorized", http.StatusForbidden, "failed", nil)
+					c.JSON(http.StatusForbidden, response)
+					c.Abort()
+					return
+				}
+
 				c.Set("user", cachedInfo)
 			}
 		}
 
 		if err == redis.Nil {
-			var jwtSess dto.JwtSession
+			var (
+				jwtSess    dto.JwtSession
+				consumerID int64
+			)
+
 			user, _ := f.UserRepository.FindOne(c, "*", "id = ?", userId)
 
+			if user.ConsumerID != nil {
+				consumerID = *user.ConsumerID
+			}
+
 			jwtSess = dto.JwtSession{
-				ID:        user.ID,
-				Email:     user.Email,
-				CreatedAt: user.CreatedAt,
+				ID:         user.ID,
+				ConsumerID: int(consumerID),
+				Email:      user.Email,
+				UserType:   user.UserType,
+				CreatedAt:  user.CreatedAt,
 			}
 
 			jsonData, err := json.Marshal(jwtSess)
@@ -75,6 +92,13 @@ func Authenticate() gin.HandlerFunc {
 				f.RedisClient.Set(c, cacheKey, jsonData, time.Hour)
 			} else {
 				fmt.Println("Error marshalling data for cache:", err)
+			}
+
+			if userType != "" && (userType != user.UserType) {
+				response := util.APIResponse("Forbidden access: User not authorized", http.StatusForbidden, "failed", nil)
+				c.JSON(http.StatusForbidden, response)
+				c.Abort()
+				return
 			}
 
 			c.Set("user", jwtSess)

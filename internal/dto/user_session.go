@@ -14,11 +14,10 @@ type (
 	}
 
 	JwtSession struct {
-		ID              int        `json:"id"`
-		Name            string     `json:"name"`
-		Email           string     `json:"email"`
-		EmailVerifiedAt *time.Time `json:"email_verified_at"`
-		PhoneNumber     string     `json:"phone_number"`
-		CreatedAt       time.Time  `json:"created_at"`
+		ID         int       `json:"id"`
+		ConsumerID int       `json:"consumer_id"`
+		Email      string    `json:"email"`
+		UserType   string    `json:"user_type"`
+		CreatedAt  time.Time `json:"created_at"`
 	}
 )

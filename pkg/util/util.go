@@ -1,19 +1,15 @@
 package util
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
-	"math/big"
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"regexp"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -98,20 +94,6 @@ func CreateErrorLog(errMessage error) {
 	log.Printf("[Error] in [%s:%d] %v", fileName, line, errMessage.Error())
 }
 
-func GenerateOTP(length int) (string, error) {
-	otpChars := "0123456789"
-	otp := make([]byte, length)
-
-	for i := range otp {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(otpChars))))
-		if err != nil {
-			return "", err
-		}
-		otp[i] = otpChars[num.Int64()]
-	}
-	return string(otp), nil
-}
-
 func IntSliceContains(slice []int, value int) bool {
 	for _, v := range slice {
 		if v == value {
@@ -137,9 +119,9 @@ func InArrayStr(array []string, str string) bool {
 
 func SaveFile(file *multipart.FileHeader) (string, error) {
 	uniqueName := fmt.Sprintf("%d-%s", time.Now().Unix(), file.Filename)
-	savePath := filepath.Join("uploads", uniqueName)
+	savePath := filepath.Join("assets/uploads", uniqueName)
 
-	if err := os.MkdirAll("uploads", os.ModePerm); err != nil {
+	if err := os.MkdirAll("assets/uploads", os.ModePerm); err != nil {
 		return "", err
 	}
 
@@ -168,28 +150,7 @@ func SaveFile(file *multipart.FileHeader) (string, error) {
 
 func DeleteFile(filePath string) error {
 	if err := os.Remove(filePath); err != nil {
-		return err // Return error if file deletion fails
+		return err
 	}
 	return nil
-}
-
-func StripHTML(input string) string {
-	re := regexp.MustCompile(`<[^>]*>`)
-	return strings.TrimSpace(re.ReplaceAllString(input, ""))
-}
-
-/*********/
-
-func BuildLikeClause(columns []string, keyword string) (string, []interface{}) {
-	likeKeyword := fmt.Sprintf("%%%s%%", strings.ToLower(keyword))
-
-	var conditions []string
-	var params []interface{}
-
-	for _, column := range columns {
-		conditions = append(conditions, fmt.Sprintf("LOWER(%s) LIKE ?", column))
-		params = append(params, likeKeyword)
-	}
-
-	return strings.Join(conditions, " OR "), params
 }
